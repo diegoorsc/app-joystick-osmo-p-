@@ -74,15 +74,26 @@ la haces tú.
 
 ## 5. Qué deberías ver
 
-1. Una lista de mandos detectados por `RawGameController`, con su nombre,
-   VID/PID, número de ejes, botones y switches (D-Pad). Por ejemplo, un
-   DualSense o un mando Xbox típico mostrará algo como
-   `Ejes=6 Botones=... Switches(D-Pad)=1` (6 ejes = stick izq X/Y, stick
-   der X/Y, gatillo izq, gatillo der — el orden exacto lo confirmamos
-   moviéndolos, no lo des por hecho).
-2. Una segunda lista (`Windows.Gaming.Input.Gamepad`) — normal que aparezca
-   vacía si tu mando no es un Xbox/compatible XInput; no es un error.
-3. Al elegir el número del mando, entra en modo monitor en vivo:
+1. Una lista de mandos detectados por `RawGameController` (prefijo `R`), con
+   su nombre, VID/PID, número de ejes, botones y switches (D-Pad).
+2. Una segunda lista de mandos detectados por `Windows.Gaming.Input.Gamepad`
+   / XInput (prefijo `X`).
+
+   **Importante:** un mismo mando físico aparece en **una sola** de las dos
+   listas, nunca en ambas — Windows lo enruta por una vía u otra según cómo
+   se identifique el hardware ante el sistema:
+   - Mandos Xbox y muchos mandos genéricos "compatibles Xbox" → aparecen
+     solo como `[X#]` (XInput). Es el caso más común y, de hecho, el más
+     cómodo: XInput ya te da los ejes con nombre (stick izquierdo/derecho,
+     gatillos) sin tener que adivinar índices.
+   - Mandos PlayStation nativos (DualShock4/DualSense sin emulación XInput)
+     y mandos genéricos "puramente HID" → aparecen solo como `[R#]`
+     (RawGameController), con ejes numerados `axis[0]`, `axis[1]`, ...
+
+   Si tu mando aparece en `[X#]`, escribe por ejemplo `X0` cuando el
+   programa te lo pida. Si aparece en `[R#]`, escribe `R0`.
+3. Al elegir el mando, entra en modo monitor en vivo. Si es un mando `[R#]`
+   (RawGameController) verás:
 
    ```
    EJES  (rango 0.0 - 1.0; centrado ~0.5):
@@ -100,29 +111,52 @@ la haces tú.
      switch[0] = Center
    ```
 
+   Si en cambio es un mando `[X#]` (XInput) verás los ejes ya identificados
+   por nombre:
+
+   ```
+   STICK IZQUIERDO  (rango -1.0 a 1.0, centrado en 0.0):
+     X =   0.012  [####################....................]
+     Y =  -0.008  [####################....................]
+
+   STICK DERECHO  (rango -1.0 a 1.0, centrado en 0.0):
+     X =   0.000  [####################....................]
+     Y =   0.000  [####################....................]
+
+   GATILLOS  (rango 0.0 a 1.0):
+     LT =   0.000  [........................................]
+     RT =   0.000  [........................................]
+
+   BOTONES: None
+   ```
+
    Este panel se refresca varias veces por segundo.
 
 ## 6. Qué comprobar exactamente (anota los resultados)
 
-- [ ] El mando aparece en la lista con un nombre reconocible.
-- [ ] Mueve el **joystick izquierdo** de izquierda a derecha: anota qué
-      `axis[N]` cambia y en qué sentido (¿sube hacia 1.0 al mover a la
-      derecha, o baja hacia 0.0?).
-- [ ] Mueve el joystick izquierdo de arriba a abajo: anota qué `axis[N]`
-      cambia.
-- [ ] Mueve el **joystick derecho** izq/der y arriba/abajo: anota los
-      `axis[N]` correspondientes.
-- [ ] Presiona algunos botones y confirma que aparecen en "BOTONES
-      pulsados" con su índice.
-- [ ] Si tu mando tiene D-Pad, muévelo y confirma que `switch[0]` cambia
-      (Up, Down, Left, Right, UpLeft, etc.).
-- [ ] Suelta ambos joysticks: confirma que sus ejes vuelven a un valor
-      estable cercano (no necesariamente exacto) a 0.5 — esto será la base
-      de la deadzone en la Fase 4.
+- [ ] El mando aparece en la lista (`[R#]` o `[X#]`) con un nombre
+      reconocible.
+- Si es un mando **`[X#]` (XInput)** — como el tuyo por USB:
+  - [ ] Mueve el joystick izquierdo: confirma que `STICK IZQUIERDO X` e `Y`
+        cambian de signo/valor según la dirección (derecha → X positivo,
+        arriba → Y positivo es lo habitual, confírmalo con tus ojos).
+  - [ ] Mueve el joystick derecho: confirma que `STICK DERECHO X`/`Y`
+        cambian.
+  - [ ] Pulsa los gatillos: confirma que `LT`/`RT` suben hacia 1.0.
+  - [ ] Suelta ambos joysticks: confirma que X e Y vuelven cerca de `0.000`.
+  - [ ] Presiona botones y confirma que aparecen listados en `BOTONES:`.
+- Si es un mando **`[R#]` (RawGameController)**:
+  - [ ] Mueve el joystick izquierdo izq/der y arriba/abajo: anota qué
+        `axis[N]` cambia en cada caso y en qué sentido.
+  - [ ] Mueve el joystick derecho: anota los `axis[N]` correspondientes.
+  - [ ] Presiona botones y confirma que aparecen en "BOTONES pulsados".
+  - [ ] Si tiene D-Pad, confirma que `switch[0]` cambia (Up/Down/Left/Right).
+  - [ ] Suelta ambos joysticks: confirma que sus ejes vuelven cerca de
+        `0.500`.
 
-Con esa tabla de "qué axis[N] es cada cosa" para tu mando concreto,
-construimos en la Fase 4 la pantalla de asignación manual (y unos valores
-por defecto razonables para mandos Xbox/PlayStation típicos).
+Con esa información (qué vía usa tu mando, y qué eje/índice es cada cosa),
+construimos en la Fase 4 la pantalla de asignación manual con valores por
+defecto razonables tanto para mandos XInput como RawGameController.
 
 ## 7. Si algo falla
 
