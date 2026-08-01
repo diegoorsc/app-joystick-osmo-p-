@@ -20,11 +20,15 @@ funciona con hardware real.
 - **Fase 2 — OBS + control simultáneo** ✅ verificada con hardware real
   Confirmado: OBS sigue capturando la Pocket 3 sin cortes mientras la
   herramienta de la Fase 1 mueve Pan/Tilt/Zoom.
-- **Fase 3 — Detección de gamepad y lectura de ejes** 🔄 en verificación
+- **Fase 3 — Detección de gamepad y lectura de ejes** ✅ verificada con hardware real
   Consola que detecta mandos Xbox/PlayStation/genéricos vía
-  `Windows.Gaming.Input.RawGameController` y muestra sus ejes/botones en
-  vivo. Ver [`docs/FASE3.md`](docs/FASE3.md).
-- **Fase 4** — Mapeo joystick → Pan/Tilt/Zoom (curva progresiva, deadzone).
+  `Windows.Gaming.Input.RawGameController`/`Gamepad` y muestra sus ejes/botones
+  en vivo. Ver [`docs/FASE3.md`](docs/FASE3.md).
+- **Fase 4 — Joystick → Pan/Tilt/Zoom** 🔄 en verificación
+  Motor de control con deadzone configurable y curva progresiva/exponencial;
+  mueve Pan/Tilt/Zoom en incrementos mientras el stick esté desviado (no
+  posiciones absolutas). Incluye Center Gimbal / Reset Zoom e inversión de
+  ejes. Ver [`docs/FASE4.md`](docs/FASE4.md).
 - **Fase 5** — Interfaz gráfica (WPF).
 - **Fase 6** — Presets PTZ, integración con Stream Deck, funciones avanzadas.
 
@@ -45,13 +49,21 @@ src/
       GamepadEnumerator.cs     Enumeración de mandos (RawGameController / XInput)
       GamepadSnapshot.cs       DTO de una lectura instantánea de ejes/botones
       GamepadReader.cs         Lectura tipada de un RawGameController
+      PtzStickFrame.cs         Lectura unificada de sticks (-1.0 a 1.0)
+      IPtzStickSource.cs / XInputStickSource.cs / RawStickSource.cs
+    Control/
+      AxisDeadzoneCurve.cs     Deadzone + curva progresiva/exponencial
+      PtzAxisController.cs     Integra velocidad -> posición absoluta (jog y seek suave)
   DjiPtz.Diagnostics/     Fase 1: herramienta de consola de diagnóstico de cámara
     Program.cs
   DjiPtz.GamepadDiagnostics/  Fase 3: herramienta de consola de diagnóstico de gamepad
     Program.cs
+  DjiPtz.PtzControl/      Fase 4: control por joystick en vivo (cámara + mando)
+    Program.cs
 docs/
   FASE1.md                Instrucciones detalladas de la Fase 1
   FASE3.md                Instrucciones detalladas de la Fase 3
+  FASE4.md                Instrucciones detalladas de la Fase 4
 ```
 
 ## Requisitos generales
