@@ -23,6 +23,17 @@ que funciona igual de bien con los tres tipos de mando.
 No hace falta instalar SDL2, DirectInput ni ningún driver adicional: es una
 API integrada en Windows 10/11.
 
+**Nota técnica (bug corregido):** `Windows.Gaming.Input` puebla su lista de
+dispositivos mediante notificaciones internas que necesitan un *bucle de
+mensajes de Windows* para entregarse. Una consola "pura" no tiene ese bucle,
+así que la primera versión de esta herramienta podía quedarse
+permanentemente en `0` mandos detectados aunque el mando estuviera
+perfectamente reconocido por Windows (esto es lo que le pasó al usuario con
+un mando PS4 que sí funcionaba bien en Windows). Se solucionó marcando el
+programa como `[STAThread]` y usando `System.Windows.Forms.Application.DoEvents()`
+solo para bombear mensajes (sin mostrar ninguna ventana), reintentando la
+enumeración durante ~3 segundos antes de darla por vacía.
+
 ## 1. Qué instalar
 
 Nada nuevo respecto a la Fase 1 (mismo .NET 8 SDK). Como esta fase usa APIs
