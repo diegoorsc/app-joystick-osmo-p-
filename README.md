@@ -24,10 +24,12 @@ funciona con hardware real.
   Consola que detecta mandos Xbox/PlayStation/genéricos vía
   `Windows.Gaming.Input.RawGameController`/`Gamepad` y muestra sus ejes/botones
   en vivo. Ver [`docs/FASE3.md`](docs/FASE3.md).
-- **Fase 4 — Joystick → Pan/Tilt/Zoom** 🔄 en verificación
-  Motor de control con deadzone configurable y curva progresiva/exponencial;
-  mueve Pan/Tilt/Zoom en incrementos mientras el stick esté desviado (no
-  posiciones absolutas). Incluye Center Gimbal / Reset Zoom e inversión de
+- **Fase 4 — Mouse + teclado → Pan/Tilt/Zoom** 🔄 en verificación
+  Ya no requiere gamepad: la rueda del mouse mueve el Pan (cada "click" de
+  scroll desplaza el Pan una cantidad configurable, con barrido suave hasta
+  llegar), las flechas Arriba/Abajo del teclado mueven el Tilt mientras se
+  mantengan pulsadas (jog, como un joystick) y las teclas +/- controlan el
+  Zoom de la misma forma. Incluye Center Gimbal / Reset Zoom e inversión de
   ejes. Ver [`docs/FASE4.md`](docs/FASE4.md).
 - **Fase 5** — Interfaz gráfica (WPF).
 - **Fase 6** — Presets PTZ, integración con Stream Deck, funciones avanzadas.
@@ -58,8 +60,11 @@ src/
     Program.cs
   DjiPtz.GamepadDiagnostics/  Fase 3: herramienta de consola de diagnóstico de gamepad
     Program.cs
-  DjiPtz.PtzControl/      Fase 4: control por joystick en vivo (cámara + mando)
+  DjiPtz.PtzControl/      Fase 4: control en vivo por mouse + teclado (cámara)
     Program.cs
+    Input/
+      MouseWheelHook.cs      Hook WH_MOUSE_LL: rueda del mouse -> Pan
+      NativeKeyboard.cs      GetAsyncKeyState: flechas -> Tilt, +/- -> Zoom
 docs/
   FASE1.md                Instrucciones detalladas de la Fase 1
   FASE3.md                Instrucciones detalladas de la Fase 3
