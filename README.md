@@ -31,6 +31,11 @@ funciona con hardware real.
   mantengan pulsadas (jog, como un joystick) y las teclas +/- controlan el
   Zoom de la misma forma. Incluye Center Gimbal / Reset Zoom e inversión de
   ejes. Ver [`docs/FASE4.md`](docs/FASE4.md).
+- **Fase Web — Control remoto desde el celular** 🔄 en verificación
+  No requiere Raspberry Pi ni gamepad: el PC con la cámara conectada levanta
+  una pagina web en la red local (mismo WiFi), con un joystick táctil para
+  Pan/Tilt y botones +/- para Zoom, pensada para abrirse desde el navegador
+  de un celular. Ver [`docs/WEBCONTROL.md`](docs/WEBCONTROL.md).
 - **Fase 5** — Interfaz gráfica (WPF).
 - **Fase 6** — Presets PTZ, integración con Stream Deck, funciones avanzadas.
 
@@ -65,10 +70,15 @@ src/
     Input/
       MouseWheelHook.cs      Hook WH_MOUSE_LL: rueda del mouse -> Pan
       NativeKeyboard.cs      GetAsyncKeyState: flechas -> Tilt, +/- -> Zoom
+  DjiPtz.WebControl/      Fase Web: pagina de control remoto para celular
+    Program.cs               Servidor Kestrel + loop de control (misma
+                              cámara, mismo PtzAxisController/AxisDeadzoneCurve)
+    WebUi.cs                 HTML/CSS/JS embebidos (joystick táctil + zoom)
 docs/
   FASE1.md                Instrucciones detalladas de la Fase 1
   FASE3.md                Instrucciones detalladas de la Fase 3
   FASE4.md                Instrucciones detalladas de la Fase 4
+  WEBCONTROL.md            Instrucciones de la Fase Web (control desde celular)
 ```
 
 ## Requisitos generales
